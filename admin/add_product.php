@@ -1,13 +1,10 @@
 <?php
 session_start();
-
 require_once '../config/db.php'; 
 
 header('Content-Type: application/json'); // Tell client that response will be JSON
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve and sanitize form inputs from $_POST, or set default values
     $name = $_POST['name'] ?? '';    
     $description = $_POST['description'] ?? '';   
     $stock = (int)($_POST['stock'] ?? 0);         

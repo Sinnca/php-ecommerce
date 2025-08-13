@@ -20,10 +20,16 @@ $Role = $_SESSION['Role'];
     <div class="sidebar d-flex flex-column p-0">
         <h2 class="border-bottom border-secondary mb-0">ShopAdmin</h2>
         <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="products.php"><i class="bi bi-box-seam"></i> Products</a>
-        <a href="#"><i class="bi bi-cart-check"></i> Orders</a>
-        <a href="#"><i class="bi bi-people"></i> Customers</a>
-        <a href="#"><i class="bi bi-bar-chart-line"></i> Reports</a>
+        <a class="d-flex align-items-center justify-content-between" 
+            data-bs-toggle="collapse" href="#productsMenu" role="button" aria-expanded="false" aria-controls="productsMenu">
+            <span><i class="bi bi-box-seam"></i> Products</span>
+            <i class="bi bi-caret-down-fill"></i>
+        </a>
+        <div class="collapse ps-4" id="productsMenu">
+            <a href="view_products.php" class="d-block mt-1"><i class="bi bi-list"></i> View Products</a>
+            <a href="manage_products.php" class="d-block mt-1"><i class="bi bi-gear"></i> Manage Products</a>
+        </div>
+        <a href="orders.php"><i class="bi bi-cart-check"></i> Orders</a>
         <hr class="bg-light">
         <a href="../auth/logout.php" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>

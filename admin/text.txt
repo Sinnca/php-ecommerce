@@ -1,0 +1,96 @@
+<script>
+document.getElementById('form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    let name = document.getElementById('name').value;
+    let description = document.getElementById('description').value;
+    let stock = document.getElementById('stock').value;
+    let price = document.getElementById('price').value;
+
+    try {
+        let response = await fetch('update_product.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                description: description,
+                stock: stock,
+                price: price
+            }),
+        });
+
+        let result = await response.json();
+        if (result.status === "success"){
+          document.getElementById('response').textContent = result.message;
+          document.getElementById('response').style.color = "green";
+        } else {
+          document.getElementById('response').textContent = result.message;
+          document.getElementById('response').style.color = "red";
+        }
+
+    } catch (error) {
+        console.error(error);
+        document.getElementById('response').textContent = "An error occurred, Please try again.";
+        document.getElementById('response').style.color = "red";
+    }
+});
+</script> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+session_start();
+require_once '../config/db.php';
+
+header('Content-Type: application/json');
+
+$data = json_decode(file_get_contents("php://input"), true);
+
+if ($data && isset($data['name'], $data['description'], $data['stock'], $data['price'], $data['id'])) {
+    $new_name = $data['name'] ?? "";
+    $new_description = $data['description'] ?? "";
+    $new_stock = (int)($data['stock'] ?? 0);
+    $new_price = (float)($data['price'] ?? 0);
+
+
+    $sql = $conn->prepare("UPDATE products SET name = ?, description = ?, stock = ?, price = ? WHERE id = ");
+    $sql->bind_param('ssid', $new_name, $new_description, $new_stock, $new_price);
+    
+    if ($sql->execute()) {
+        if ($sql->affected_rows > 0) {
+            echo json_encode([
+                "status" => "success",
+                "message" => "Product updated successfully"
+            ]);
+        } else {
+            echo json_encode([
+                "status" => "failed",
+                "message" => "No changes made or invalid product ID"
+            ]);
+        }
+    } else {
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Failed to execute update query"
+        ]);
+    }
+
+    $sql->close();
+} else {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Invalid request"
+    ]);
+}
