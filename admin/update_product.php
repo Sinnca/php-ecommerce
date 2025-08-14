@@ -25,7 +25,7 @@ if ($data && isset($data['name'], $data['description'], $data['stock'], $data['p
         } else {
             echo json_encode([
                 "status" => "failed",
-                "message" => "No changes made or invalid product ID"
+                "message" => "Failed to update, Please try again"
             ]);
         }
     } else {

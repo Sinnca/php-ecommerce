@@ -47,6 +47,15 @@ $result = $conn->query($sql);
                 >
                     Edit
                 </button>
+                <button 
+                    class="btn btn-danger btn-sm"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#deleteModal"
+                    data-id="<?= $product['id'] ?>"
+                >
+                    Delete
+                </button>
+
             </div>
         </div>
     </div>
@@ -55,6 +64,75 @@ $result = $conn->query($sql);
     <p>No products found.</p>
 <?php endif; ?>
 </div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+        Are you sure you want to delete this product?
+    </div>
+    <div class="modal-footer">
+        <form id="deleteForm">
+            <input type="hidden" name="id" id="deleteProductId">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+        <p id="response" class="text-center mt-2"></p>
+    </div>
+</div>
+</div>
+
+<script>
+    //set the id of the product in  the modal
+document.getElementById('deleteModal').addEventListener('show.bs.modal', function(event) {
+    let button = event.relatedTarget;
+    let productId = button.getAttribute('data-id');
+    document.getElementById('deleteProductId').value = productId;
+});
+    // delete script
+document.getElementById('deleteForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    let id = document.getElementById('deleteProductId').value;
+
+    try {
+        let response = await fetch('delete_product.php', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        });
+
+        let result = await response.json();
+        let responseElem = document.getElementById('response');
+
+        if (result.status === "success") {
+            responseElem.textContent = result.message;
+            responseElem.style.color = "green";
+        } else if (result.status === "error") {
+            responseElem.textContent = result.message;
+            responseElem.style.color = "red"; 
+        }
+        else {
+            responseElem.textContent = result.message;
+            responseElem.style.color = "red";
+        }
+    } catch (error) {
+        console.error(error);
+        let responseElem = document.getElementById('response');
+        responseElem.textContent = "An error occurred, Please try again";
+        responseElem.style.color = "red";
+    }
+});
+</script>
+
+
+
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
